@@ -21,7 +21,9 @@ void main() {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
         notesRoute: (context) => const NotesView(),
+        verifyEmailView: (context) => const VerifyEmailView(),
       },
+      debugShowCheckedModeBanner: false,
     ),
   );
 }

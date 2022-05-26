@@ -13,6 +13,9 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  bool _validateEmail = false;
+  bool _validatePass = false;
+  bool _isObsecure = true;
   @override
   void initState() {
     _email = TextEditingController();
@@ -40,55 +43,77 @@ class _LoginViewState extends State<LoginView> {
             autocorrect: false,
             controller: _email,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(hintText: 'Enter E-mail here'),
+            decoration: InputDecoration(
+              hintText: 'Enter E-mail here',
+              labelText: 'Email',
+              errorText: _validateEmail ? 'Email field is empty.' : null,
+            ),
           ),
           TextField(
             controller: _password,
-            obscureText: true,
+            obscureText: _isObsecure,
             autocorrect: false,
             enableSuggestions: false,
-            decoration: const InputDecoration(hintText: 'Enter Password'),
+            decoration: InputDecoration(
+              labelText: 'Password',
+              hintText: 'Enter Password',
+              errorText: _validatePass ? 'Password field is empty.' : null,
+              suffixIcon: IconButton(
+                  onPressed: (() {
+                    setState(() {
+                      _isObsecure = !_isObsecure;
+                    });
+                  }),
+                  icon: Icon(
+                      _isObsecure ? Icons.visibility : Icons.visibility_off)),
+            ),
           ),
           TextButton(
             onPressed: () async {
               final email = _email.text;
               final password = _password.text;
-              try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
-                  email: email,
-                  password: password,
-                );
-                // ignore: use_build_context_synchronously
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  notesRoute,
-                  (route) => false,
-                );
-              } on FirebaseAuthException catch (e) {
-                switch (e.code) {
-                  case 'user-not-found':
-                    await showErrorDialog(
-                      context,
-                      'No registered user fount.\nEmail is not registered',
-                    );
-                    break;
-                  case 'wrong-password':
-                    await showErrorDialog(
-                      context,
-                      'Incorrect Password!',
-                    );
-                    break;
+              setState(() {
+                email.isEmpty ? _validateEmail = true : _validateEmail = false;
+                password.isEmpty ? _validatePass = true : _validatePass = false;
+              });
+              if (!_validateEmail && !_validatePass) {
+                try {
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: email,
+                    password: password,
+                  );
+                  // ignore: use_build_context_synchronously
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notesRoute,
+                    (route) => false,
+                  );
+                } on FirebaseAuthException catch (e) {
+                  switch (e.code) {
+                    case 'user-not-found':
+                      await showErrorDialog(
+                        context,
+                        'No registered user found.\nEmail is not registered',
+                      );
+                      break;
+                    case 'wrong-password':
+                      await showErrorDialog(
+                        context,
+                        'Incorrect Password!',
+                      );
+                      break;
 
-                  default:
-                    await showErrorDialog(
-                      context,
-                      'Error: ${e.code}',
-                    );
+                    default:
+                      await showErrorDialog(
+                        context,
+                        'Error: ${e.code}',
+                      );
+                  }
+                } catch (e) {
+                  await showErrorDialog(
+                    context,
+                    'no details',
+                  );
                 }
-              } catch (e) {
-                await showErrorDialog(
-                  context,
-                  e.toString(),
-                );
               }
             },
             child: const Text('Login'),
