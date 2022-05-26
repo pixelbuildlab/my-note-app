@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:developer' as devtools show log;
 
-import 'package:mynoteapp/constants/routes.dart';
+import '../constants/routes.dart';
+import '../utilities/show_toast.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -62,14 +61,13 @@ class _RegisterViewState extends State<RegisterView> {
               } on FirebaseAuthException catch (e) {
                 switch (e.code) {
                   case 'weak-password':
-                    devtools.log(
+                    showToast(
                         'The Password is to weak. \nProvide atleast six characters.');
                     break;
                   case 'email-already-in-use':
-                    devtools.log('Email is already Registered');
+                    showToast('Email is already Registered');
                     break;
                   default:
-                    devtools.log(e.code);
                 }
               }
             },
@@ -87,13 +85,4 @@ class _RegisterViewState extends State<RegisterView> {
       ),
     );
   }
-}
-
-void showToast(String string) {
-  Fluttertoast.showToast(
-    msg: string,
-    backgroundColor: Colors.red,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-  );
 }

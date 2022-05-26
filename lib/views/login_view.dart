@@ -1,24 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:developer' as devtools show log;
-
-import 'package:mynoteapp/constants/routes.dart';
+import '../constants/routes.dart';
+import '../utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
 
   @override
   State<LoginView> createState() => _LoginViewState();
-}
-
-void showToast(String string) {
-  Fluttertoast.showToast(
-    msg: string,
-    backgroundColor: Colors.red,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-  );
 }
 
 class _LoginViewState extends State<LoginView> {
@@ -77,15 +66,29 @@ class _LoginViewState extends State<LoginView> {
               } on FirebaseAuthException catch (e) {
                 switch (e.code) {
                   case 'user-not-found':
-                    devtools.log(
-                        'No registered user fount.\nEmail is not registered');
+                    await showErrorDialog(
+                      context,
+                      'No registered user fount.\nEmail is not registered',
+                    );
                     break;
                   case 'wrong-password':
-                    devtools.log('Incorrect Password!');
+                    await showErrorDialog(
+                      context,
+                      'Incorrect Password!',
+                    );
                     break;
+
                   default:
-                    devtools.log(e.code);
+                    await showErrorDialog(
+                      context,
+                      'Error: ${e.code}',
+                    );
                 }
+              } catch (e) {
+                await showErrorDialog(
+                  context,
+                  e.toString(),
+                );
               }
             },
             child: const Text('Login'),

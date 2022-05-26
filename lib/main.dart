@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mynoteapp/constants/routes.dart';
-import 'package:mynoteapp/views/login_view.dart';
-import 'package:mynoteapp/views/register_view.dart';
-import 'package:mynoteapp/views/verify_email_view.dart';
+import 'constants/routes.dart';
+import 'views/login_view.dart';
+import 'views/register_view.dart';
+import 'views/verify_email_view.dart';
 import 'firebase_options.dart';
+import 'utilities/show_toast.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,9 +40,7 @@ class HomePage extends StatelessWidget {
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
             if (user != null) {
-              showToast(user.toString());
               if (user.emailVerified) {
-                showToast('You are a verified user');
               } else {
                 return const VerifyEmailView();
               }
@@ -158,13 +156,4 @@ Future<bool> showAboutUsDialog(BuildContext context) {
       );
     },
   ).then((value) => value ?? false);
-}
-
-void showToast(String string) {
-  Fluttertoast.showToast(
-    msg: string,
-    backgroundColor: Colors.red,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-  );
 }
