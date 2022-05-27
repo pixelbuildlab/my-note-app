@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mynoteapp/utilities/show_toast.dart';
 import '../constants/routes.dart';
 import '../utilities/show_error_dialog.dart';
 
@@ -82,11 +85,19 @@ class _LoginViewState extends State<LoginView> {
                     email: email,
                     password: password,
                   );
-                  // ignore: use_build_context_synchronously
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    notesRoute,
-                    (route) => false,
-                  );
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user?.emailVerified ?? false) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      notesRoute,
+                      (route) => false,
+                    );
+                  } else {
+                    showToast('Please verify email before continue');
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      verifyEmailView,
+                      (route) => false,
+                    );
+                  }
                 } on FirebaseAuthException catch (e) {
                   switch (e.code) {
                     case 'user-not-found':

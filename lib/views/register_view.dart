@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mynoteapp/utilities/show_error_dialog.dart';
-
 import '../constants/routes.dart';
 
 class RegisterView extends StatefulWidget {
