@@ -1,10 +1,10 @@
-import '../auth/auth_provider.dart';
-import '../auth/auth_user.dart';
-import '../auth/auth_exceptions.dart';
+import 'package:mynoteapp/services/auth/auth_exceptions.dart';
+import 'package:mynoteapp/services/auth/auth_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuthException, FirebaseAuth;
+import 'package:mynoteapp/services/auth/auth_user.dart';
 
-class FirebaseAuthProvider extends AuthProvider {
+class FirebaseAuthProvider implements AuthProvider {
   @override
   Future<AuthUser> createUser({
     required String email,
