@@ -5,9 +5,8 @@ import 'package:mynoteapp/services/auth/firebase_auth_provider.dart';
 class AuthService implements AuthProvider {
   final AuthService provider;
   const AuthService(this.provider);
-
+//there is an error
   factory AuthService.firebase() => AuthService(FirebaseAuthProvider());
-
   @override
   Future<AuthUser> createUser({
     required String email,
