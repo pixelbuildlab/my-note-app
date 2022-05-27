@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mynoteapp/services/auth/auth_exceptions.dart';
+import 'package:mynoteapp/services/auth/auth_service.dart';
 import 'package:mynoteapp/utilities/show_toast.dart';
 import '../constants/routes.dart';
 import '../utilities/show_error_dialog.dart';
@@ -47,8 +47,8 @@ class _LoginViewState extends State<LoginView> {
             controller: _email,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              hintText: 'Enter E-mail here',
-              labelText: 'Email',
+              hintText: 'E-mail',
+              labelText: 'E-mail',
               errorText: _validateEmail ? 'Email field is empty.' : null,
             ),
           ),
@@ -59,7 +59,7 @@ class _LoginViewState extends State<LoginView> {
             enableSuggestions: false,
             decoration: InputDecoration(
               labelText: 'Password',
-              hintText: 'Enter Password',
+              hintText: 'Password',
               errorText: _validatePass ? 'Password field is empty.' : null,
               suffixIcon: IconButton(
                   onPressed: (() {
@@ -81,12 +81,12 @@ class _LoginViewState extends State<LoginView> {
               });
               if (!_validateEmail && !_validatePass) {
                 try {
-                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  await AuthService.firebase().logIn(
                     email: email,
                     password: password,
                   );
-                  final user = FirebaseAuth.instance.currentUser;
-                  if (user?.emailVerified ?? false) {
+                  final user = AuthService.firebase().currentUser;
+                  if (user?.isEmailVerified ?? false) {
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       notesRoute,
                       (route) => false,
@@ -94,35 +94,24 @@ class _LoginViewState extends State<LoginView> {
                   } else {
                     showToast('Please verify email before continue');
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      verifyEmailView,
+                      verifyEmailRoute,
                       (route) => false,
                     );
                   }
-                } on FirebaseAuthException catch (e) {
-                  switch (e.code) {
-                    case 'user-not-found':
-                      await showErrorDialog(
-                        context,
-                        'No registered user found.\nEmail is not registered',
-                      );
-                      break;
-                    case 'wrong-password':
-                      await showErrorDialog(
-                        context,
-                        'Incorrect Password!',
-                      );
-                      break;
-
-                    default:
-                      await showErrorDialog(
-                        context,
-                        'Error: ${e.code}',
-                      );
-                  }
-                } catch (e) {
+                } on UserNotFoundAuthException {
                   await showErrorDialog(
                     context,
-                    'no details',
+                    'No registered user found.\nEmail is not registered',
+                  );
+                } on WrongPasswordAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Incorrect Password!',
+                  );
+                } on GenericAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Authentication erro',
                   );
                 }
               }

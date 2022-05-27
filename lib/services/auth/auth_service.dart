@@ -3,10 +3,10 @@ import 'package:mynoteapp/services/auth/auth_user.dart';
 import 'package:mynoteapp/services/auth/firebase_auth_provider.dart';
 
 class AuthService implements AuthProvider {
-  final AuthService provider;
+  final AuthProvider provider;
   const AuthService(this.provider);
-//there is an error
   factory AuthService.firebase() => AuthService(FirebaseAuthProvider());
+
   @override
   Future<AuthUser> createUser({
     required String email,
@@ -35,4 +35,7 @@ class AuthService implements AuthProvider {
 
   @override
   Future<void> sendEmailVerificaiton() => provider.sendEmailVerificaiton();
+
+  @override
+  Future<void> initialize() => provider.initialize();
 }
