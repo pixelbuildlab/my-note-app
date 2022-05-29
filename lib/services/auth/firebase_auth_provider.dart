@@ -26,7 +26,7 @@ class FirebaseAuthProvider implements AuthProvider {
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'weak-password':
-          throw WeakPasswordAuthExceptio();
+          throw WeakPasswordAuthException();
 
         case 'email-already-in-use':
           throw EmailAlreadyInUseAuthException();

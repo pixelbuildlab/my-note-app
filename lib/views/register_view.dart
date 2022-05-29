@@ -44,8 +44,8 @@ class _RegisterViewState extends State<RegisterView> {
             controller: _email,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              labelText: 'Email',
-              hintText: 'Enter your email',
+              labelText: 'E-mail',
+              hintText: 'E-mail',
               errorText: _validateEmail ? 'Email field is empty.' : null,
             ),
           ),
@@ -56,7 +56,7 @@ class _RegisterViewState extends State<RegisterView> {
             enableSuggestions: false,
             decoration: InputDecoration(
               labelText: 'Password',
-              hintText: 'Enter Password',
+              hintText: 'Password',
               errorText: _validatePass ? 'Password field is empty.' : null,
               suffixIcon: IconButton(
                   onPressed: (() {
